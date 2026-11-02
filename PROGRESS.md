@@ -221,3 +221,17 @@ Merged unrelated histories without force-pushing; resolved .gitignore add/add by
 remote Python ignore rules and local .venv/ and .DS_Store entries. Application unchanged.
 Prior verification still applies to application state. AI/ and generated artifacts remain untracked.
 Next: commit merge, push main with upstream tracking, verify remote commit equals local HEAD.
+
+## Follow-up: README audit
+Compared README against config.py, __main__.py, ui_assets.py, browser regression coverage,
+pyproject.toml and fetched origin/main README. Confirmed pushed README already documents dark/light
+mode persistence, typed snapshots, separated UI assets and uv commands.
+Corrected local documentation: added clone/cd and occupied-port troubleshooting, clarified asset
+paths and server restarts, fixed misplaced config bullet, described theme regression checks, and
+qualified cancellation behavior with the known cleanup-failure defect from REVIEW.md. Historical
+review distinction now explicit. No application changes or new runtime checks needed for docs.
+`git diff --check` passed. This audit's README/PROGRESS edits are local and not yet committed/pushed.
+User clarified README should explain UI editing structure and app architecture. Added actual source
+folder tree, module dependency diagram, runtime pipeline explanation, UI change-to-file table,
+resource-loading example and targeted UI regression command. Cross-checked referenced paths and
+symbols against source; `git diff --check` passed. Documentation-only, local/uncommitted edits.

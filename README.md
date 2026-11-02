@@ -10,6 +10,8 @@ in webpage text. Its output is fixed demonstration text plus the source characte
 Requires Python 3.12+ and uv. All Python dependencies live in `.venv`.
 
 ```sh
+git clone https://github.com/ariobarxan/Summarizer.git
+cd Summarizer
 uv sync --locked
 uv run playwright install chromium
 uv run --locked python -c 'import sys; print(sys.executable)'
@@ -26,6 +28,17 @@ blocked, switching still works for the current visit. Clearing site data resets 
 Fetching remote pages requires network access. Browser binaries use Playwright's own cache.
 `uv.lock` is checked in; dependency changes require `uv sync` and review of the updated lock.
 
+If port 7860 is already in use, stop the previous app with **Ctrl+C** in its terminal,
+or launch on another port:
+
+```sh
+SUMMARIZER_PORT=7861 uv run --locked python -m summarizer
+```
+
+Open **http://127.0.0.1:7861** in that case. Keep the terminal running; **Ctrl+C** stops the
+server. Use `SUMMARIZER_PORT`, rather than `GRADIO_SERVER_PORT`, because the application
+passes its own configured port to Gradio. Restart the server after changing code or UI assets.
+
 ## Checks
 
 ```sh
@@ -39,10 +52,38 @@ uv run --locked mypy src tests
 The suite requires installed Chromium, local socket binding, and browser process support.
 It uses local HTTP fixtures, never public websites or LLMs. Browser smoke tests launch the
 actual Gradio app and exercise extraction, streaming, completion, invalid input and cancellation.
+They also check both system-theme defaults, keyboard theme switching, saved preference after
+reload, mobile overflow, and switching when browser storage is denied.
 Unit tests use independent substitutes to verify orchestration without starting Gradio or Chromium.
 See PROGRESS.md for exact execution evidence, mutation checks, and independent review status.
 
 ## Architecture and decisions
+
+```text
+src/summarizer/
+├── __main__.py           # Composition root and local server launch
+├── config.py             # Validated environment settings
+├── contracts.py          # Loader/extractor/summarizer protocols and errors
+├── application.py        # URL validation, pipeline, stages and snapshots
+├── adapters/
+│   ├── web.py            # Playwright loading and Trafilatura extraction
+│   └── mock.py           # Deterministic mock summarization stream
+├── presentation.py       # Gradio components, events and status messages
+├── ui_assets.py          # Loads bundled HTML, CSS and JS resources
+├── ui_style.py           # Creates the Gradio base theme
+└── assets/
+    ├── styles.css        # Layout, palettes, responsive and focus styles
+    ├── color_mode.js     # Theme switch and browser-local persistence
+    └── templates/
+        ├── appearance.html
+        ├── hero.html
+        ├── mock_notice.html
+        ├── source_heading.html
+        ├── output_heading.html
+        └── footer.html
+```
+
+The module paths below are relative to `src/summarizer/`.
 
 - `contracts.py`: framework-free loader, extractor, streaming provider Protocols and errors.
 - `application.py`: URL validation and summarize-page orchestration; receives dependencies explicitly.
@@ -58,14 +99,33 @@ See PROGRESS.md for exact execution evidence, mutation checks, and independent r
 - `ui_assets.py`: loads trusted static assets into named constants via Python package resources;
   this works independently of the current directory, including from built wheels.
   Composition passes the CSS at launch using Gradio 6's theme/CSS API.
+- `config.py`: validated environment settings; `__main__.py` constructs dependencies and launches.
 
 Edit the HTML fragments to change static copy/markup, CSS to change appearance, and JavaScript
 to change theme behavior. `presentation.py` keeps the Gradio components and event wiring.
 These fragments contain no user-input substitution and need no template engine or extra server.
-- `config.py`: validated environment settings; `__main__.py` constructs dependencies and launches.
 
 Dependency direction is presentation → application → contracts; concrete adapters implement contracts.
 Only composition constructs concrete dependencies. Application tests demonstrate replaceability.
+
+```mermaid
+flowchart LR
+    Root[Composition: __main__.py] --> UI[Presentation: Gradio]
+    Root --> App[Application: SummarizePage]
+    Root --> Adapters[Infrastructure: web and mock adapters]
+    UI --> App
+    App --> Contracts[Core: protocols and errors]
+    Adapters -. implement .-> Contracts
+    Assets[HTML / CSS / JavaScript] --> UI
+```
+
+At runtime, `SummarizePage.stream()` validates the URL, awaits the loader's rendered HTML,
+passes that HTML to the extractor, and consumes text deltas from the summarizer. It yields
+immutable `SummarizationSnapshot` objects with a provider-neutral `Stage` and accumulated
+`output_text`. `summarize_event()` translates these into output/status updates for Gradio.
+Adapters own their resources and translate library failures into the shared application errors.
+Application logic imports neither Gradio nor concrete adapters; dependencies are passed explicitly.
+
 No database, separate API server, agent framework, or direct HTTPX dependency is added (Gradio has
 its own transitive dependencies). Async generators fit Gradio's streaming events and Playwright's
 async lifecycle. Extracting synchronously keeps the small local pipeline simple; large extraction
@@ -73,8 +133,9 @@ can block the event loop and is a future optimization. Each request owns its bro
 shared mutable browser state at the cost of startup overhead.
 
 Streams yield nonempty **deltas**, not snapshots. The application accumulates snapshots for UI.
-Streams expose `aclose()` and are closed on early termination. Cancellation propagates unchanged;
-adapters clean resources. Expected library failures become application errors with chained causes.
+Streams expose `aclose()` and are closed on early termination. Cancellation normally propagates
+unchanged; a known combined cleanup-failure exception is described under Limits below.
+Adapters clean resources. Expected library failures become application errors with chained causes.
 A failure after deltas leaves partial output visible and reports failure rather than completion.
 
 Compatibility decisions were checked against installed Gradio 6.31.0, Playwright 1.64.1 and
@@ -82,6 +143,43 @@ Trafilatura 2.3.1. Gradio's async generator/event behavior is covered by the bro
 [Gradio event docs](https://www.gradio.app/docs/gradio/blocks) document `cancels`.
 [Playwright navigation docs](https://playwright.dev/python/docs/api/class-page#page-goto)
 document bounded `domcontentloaded` navigation and the need to inspect HTTP status explicitly.
+
+## Making UI changes
+
+| Change | File to edit |
+| --- | --- |
+| Header, introduction or feature tags | `assets/templates/hero.html` |
+| Theme switch markup or accessible label | `assets/templates/appearance.html` |
+| Mock-mode notice | `assets/templates/mock_notice.html` |
+| Source/output headings or footer copy | Corresponding HTML file in `assets/templates/` |
+| Colors, spacing, borders, mobile layout or focus indicators | `assets/styles.css` |
+| Theme preference loading, switching or saving | `assets/color_mode.js` |
+| Gradio base theme and system font stack | `ui_style.py` |
+| Inputs, buttons, component labels or event wiring | `presentation.py:create_ui()` |
+| Progress messages and user-visible error handling | `presentation.py:summarize_event()` |
+
+The HTML files are static fragments, not a full-page template: Gradio owns the page and its
+interactive components. `ui_assets.py` reads the fragments using package resources and exposes
+named constants, so component construction stays readable:
+
+```python
+from .ui_assets import HERO_HTML
+
+gr.HTML(HERO_HTML, elem_id="hero")
+```
+
+CSS is passed to `launch(css=UI_CSS)` at the composition root; the theme-switch JavaScript is
+attached through the appearance component's `js_on_load`. Theme preferences stay in the browser,
+not in Python application state. Keep HTML IDs/classes consistent with CSS selectors and the
+theme-switch script. Do not interpolate webpage text into the trusted HTML or JavaScript assets;
+output belongs in the existing Gradio textbox.
+
+After editing, restart the app, refresh the browser and check both modes and a narrow viewport.
+For UI and theme regression checks, run:
+
+```sh
+uv run --locked pytest -q tests/test_presentation.py tests/test_browser_flow.py
+```
 
 ## Configuration
 
@@ -119,3 +217,9 @@ private network addresses and arbitrary browser subresources are allowed. Use th
 in a trusted local environment. Page size and extraction CPU/memory are not capped. Browser cleanup
 is tested for normal, error and cooperative cancellation paths, not process crashes or repeated forced
 cancellation. The Gradio queue is bounded to eight pending jobs and one active submission.
+
+One known lifecycle defect remains: if navigation is cancelled and Playwright's browser cleanup
+also raises an error, the cleanup error can mask cancellation as `PageLoadError`. See finding 2
+in [REVIEW.md](REVIEW.md) for reproduction and suggested remediation. That review describes the
+original frozen implementation; its mock-specific stage-label finding was addressed later by
+the `Stage` enum and presentation-side message mapping recorded in [PROGRESS.md](PROGRESS.md).
