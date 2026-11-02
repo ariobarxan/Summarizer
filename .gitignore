@@ -222,3 +222,6 @@ __marimo__/
 # Local project environment and macOS metadata
 .venv/
 .DS_Store
+
+# Generated local UI verification screenshots
+/artifacts/
