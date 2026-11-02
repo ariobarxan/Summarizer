@@ -5,6 +5,38 @@ extracts readable text with Trafilatura, and streams a **mock demonstration**.
 The mock does not produce meaningful summaries, use an LLM, or follow instructions
 in webpage text. Its output is fixed demonstration text plus the source character count.
 
+<p align="center">
+  <a href="#setup-and-use">Setup</a> ·
+  <a href="#architecture-and-decisions">Architecture</a> ·
+  <a href="#making-ui-changes">UI customization</a> ·
+  <a href="#configuration">Configuration</a>
+</p>
+
+## Preview
+
+<table>
+  <tr>
+    <th width="50%">Home page</th>
+    <th width="50%">Completed mock demonstration</th>
+  </tr>
+  <tr>
+    <td valign="top" align="center">
+      <a href="docs/screenshots/HomePage1.png">
+        <img src="docs/screenshots/HomePage1.png" width="360"
+             alt="Dark-mode home page with the theme switch, mock notice and URL input">
+      </a>
+    </td>
+    <td valign="top" align="center">
+      <a href="docs/screenshots/HomePage2.png">
+        <img src="docs/screenshots/HomePage2.png" width="360"
+             alt="Completed mock demonstration showing status and streamed output">
+      </a>
+    </td>
+  </tr>
+</table>
+
+<p align="center"><sub>Click either preview to view the full-size screenshot.</sub></p>
+
 ## Setup and use
 
 Requires Python 3.12+ and uv. All Python dependencies live in `.venv`.

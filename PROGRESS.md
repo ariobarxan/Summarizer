@@ -235,3 +235,11 @@ User clarified README should explain UI editing structure and app architecture. 
 folder tree, module dependency diagram, runtime pipeline explanation, UI change-to-file table,
 resource-loading example and targeted UI regression command. Cross-checked referenced paths and
 symbols against source; `git diff --check` passed. Documentation-only, local/uncommitted edits.
+
+## Follow-up: README screenshots and presentation
+Located user-supplied HomePage1.png and HomePage2.png on Desktop and visually inspected both.
+Moved originals into docs/screenshots/ (authorized Desktop move); no image edits or new captures.
+Added a two-column README preview with 360px-wide linked images, descriptive alt text, captions,
+and compact section-navigation links. Existing main README content preserved.
+Verified both destination PNGs exist/nonempty and `git diff --check` passes. Documentation-only;
+no application tests rerun. Changes local/uncommitted; unrelated AI/ and artifacts/ untouched.
