@@ -6,12 +6,21 @@ from contextlib import aclosing
 
 import gradio as gr
 
-from .application import SummarizePage
+from .application import Stage, SummarizePage
 from .contracts import (
     ExtractionError,
     InvalidURLError,
     PageLoadError,
     SummarizationError,
+)
+from .ui_assets import (
+    APPEARANCE_HTML,
+    COLOR_MODE_JS,
+    FOOTER_HTML,
+    HERO_HTML,
+    MOCK_NOTICE_HTML,
+    OUTPUT_HEADING_HTML,
+    SOURCE_HEADING_HTML,
 )
 
 logger = logging.getLogger(__name__)
@@ -21,13 +30,19 @@ async def summarize_event(
     use_case: SummarizePage, url: str
 ) -> AsyncGenerator[tuple[str, str], None]:
     """Reset output, render progress, retain partial output on expected failures."""
+    stage_messages = {
+        Stage.LOADING: "Loading page",
+        Stage.EXTRACTING: "Extracting readable text",
+        Stage.STREAMING: "Streaming mock demonstration",
+        Stage.COMPLETE: "Complete — mock demonstration only",
+    }
     text = ""
     yield text, "Starting — mock provider"
     try:
         async with aclosing(use_case.stream(url)) as updates:
             async for update in updates:
-                text = update.text
-                yield text, update.stage
+                text = update.output_text
+                yield text, stage_messages[update.stage]
     except InvalidURLError:
         yield text, "Invalid URL. Enter an absolute HTTP or HTTPS URL without credentials."
     except PageLoadError:
@@ -51,17 +66,42 @@ def create_ui(use_case: SummarizePage) -> gr.Blocks:
 
     demo = gr.Blocks(title="Local Webpage Summarizer")
     with demo:
-        gr.Markdown(
-            "# Local Webpage Summarizer\n"
-            "**MOCK provider: output is a deterministic streaming demonstration, "
-            "not a meaningful summary.** Page text is treated as untrusted source data."
-        )
-        url = gr.Textbox(label="Webpage URL", placeholder="https://example.com/article")
-        with gr.Row():
-            button = gr.Button("Summarize", variant="primary")
-            cancel = gr.Button("Cancel")
-        output = gr.Textbox(label="Mock output", lines=8, interactive=False)
-        status = gr.Textbox(label="Status", interactive=False)
+        with gr.Column(elem_id="workspace"):
+            gr.HTML(
+                APPEARANCE_HTML,
+                elem_id="appearance-bar",
+                js_on_load=COLOR_MODE_JS,
+            )
+            gr.HTML(HERO_HTML, elem_id="hero")
+            gr.HTML(MOCK_NOTICE_HTML, elem_id="mock-notice")
+            with gr.Column(elem_id="input-card"):
+                gr.HTML(SOURCE_HEADING_HTML)
+                url = gr.Textbox(
+                    label="Webpage URL",
+                    placeholder="https://example.com/an-interesting-article",
+                    elem_id="url-input",
+                )
+                with gr.Row(elem_id="actions"):
+                    button = gr.Button(
+                        "Summarize", variant="primary", scale=3, elem_id="summarize-button"
+                    )
+                    cancel = gr.Button("Cancel", scale=1, elem_id="cancel-button")
+            with gr.Column(elem_id="output-card"):
+                gr.HTML(OUTPUT_HEADING_HTML)
+                status = gr.Textbox(
+                    label="Status",
+                    value="Ready — add a webpage to begin.",
+                    interactive=False,
+                    elem_id="flow-status",
+                )
+                output = gr.Textbox(
+                    label="Mock output",
+                    lines=7,
+                    interactive=False,
+                    elem_id="summary-output",
+                    placeholder="Your mock demonstration will appear here…",
+                )
+            gr.HTML(FOOTER_HTML, elem_id="page-note")
         event = button.click(
             submit,
             inputs=url,

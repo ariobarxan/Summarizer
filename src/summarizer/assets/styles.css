@@ -1,0 +1,171 @@
+.gradio-container {
+    --app-canvas: #f3f6f4;
+    --app-text: #173a36;
+    --app-muted: #526b65;
+    --app-card: #ffffff;
+    --app-card-border: #dce7e1;
+    --app-label: #36534b;
+    --app-input: #f8fbf9;
+    --app-input-border: #cfddd5;
+    --app-placeholder: #61796e;
+    --app-glow: #dceee5;
+    --app-notice-border: #e9d6ad;
+    --app-notice: #fff8e9;
+    --app-notice-text: #70501d;
+    --app-notice-title: #62400d;
+    --app-accent-text: #33705c;
+    --app-field-border: #b8cec2;
+    --app-primary: #176b50;
+    --app-primary-hover: #10563f;
+    --app-secondary: #f3f7f4;
+    --app-secondary-text: #365b4c;
+    --app-secondary-border: #d8e5dc;
+    --app-secondary-hover: #e7f0ea;
+    --app-focus: #369b78;
+    --app-status: #eaf4ee;
+    --app-status-border: #bed9c9;
+    --app-status-text: #2f5d49;
+    --app-output: #f7f9fc;
+    --app-output-border: #c8d5e2;
+    --app-footnote: #61766e;
+    --app-primary-text: #ffffff;
+    color-scheme: light;
+
+    --body-background-fill: var(--app-canvas);
+    --body-text-color: var(--app-text);
+    --body-text-color-subdued: var(--app-muted);
+    --block-background-fill: var(--app-card);
+    --block-border-color: var(--app-card-border);
+    --block-label-text-color: var(--app-label);
+    --block-title-text-color: var(--app-text);
+    --input-background-fill: var(--app-input);
+    --input-border-color: var(--app-input-border);
+    --input-text-color: var(--app-text);
+    --input-placeholder-color: var(--app-placeholder);
+    --background-fill-primary: var(--app-card);
+    --background-fill-secondary: var(--app-canvas);
+    background: radial-gradient(ellipse at 10% 0%, var(--app-glow) 0%, transparent 48%), var(--app-canvas);
+    color: var(--app-text);
+}
+
+.gradio-container[data-color-mode="dark"] {
+    --app-canvas: #0d1918;
+    --app-text: #e3f1eb;
+    --app-muted: #a5bfb3;
+    --app-card: #172824;
+    --app-card-border: #314a40;
+    --app-label: #c5dbd0;
+    --app-input: #10211d;
+    --app-input-border: #425f51;
+    --app-placeholder: #93ada0;
+    --app-glow: #163a30;
+    --app-notice-border: #705d35;
+    --app-notice: #30291b;
+    --app-notice-text: #e5cb92;
+    --app-notice-title: #f5daa0;
+    --app-accent-text: #8cdcb5;
+    --app-field-border: #456455;
+    --app-primary: #8ce0b7;
+    --app-primary-hover: #acebcd;
+    --app-secondary: #253c32;
+    --app-secondary-text: #d0e8db;
+    --app-secondary-border: #486552;
+    --app-secondary-hover: #32513e;
+    --app-focus: #8ce0b7;
+    --app-status: #19382b;
+    --app-status-border: #416d53;
+    --app-status-text: #b4ebca;
+    --app-output: #192b36;
+    --app-output-border: #405b6e;
+    --app-footnote: #9fb8aa;
+    --app-primary-text: #103426;
+    color-scheme: dark;
+}
+#workspace { max-width: 1000px; margin: 36px auto 24px; gap: 24px; }
+#appearance-bar { padding: 0 4px; border: 0; background: transparent; }
+.appearance-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.appearance-caption { color: var(--app-muted); font-size: 12px; letter-spacing: .03em; }
+#color-mode-toggle { display: inline-flex; align-items: center; gap: 10px; padding: 9px 12px;
+    background: var(--app-card); border: 1px solid var(--app-card-border); border-radius: 99px;
+    color: var(--app-text); font: inherit; font-size: 13px; cursor: pointer; }
+.mode-track { display: inline-block; width: 32px; height: 18px; border-radius: 99px;
+    background: var(--app-field-border); padding: 3px; box-sizing: border-box; }
+.mode-track::after { content: ''; display: block; width: 12px; height: 12px;
+    border-radius: 50%; background: var(--app-card); transition: transform .15s; }
+#color-mode-toggle[aria-checked="true"] .mode-track { background: var(--app-primary); }
+#color-mode-toggle[aria-checked="true"] .mode-track::after { transform: translateX(14px); }
+@media (prefers-reduced-motion: reduce) { .mode-track::after { transition: none; } }
+#hero { padding: 0; border: 0; background: transparent; }
+.hero-panel {
+    padding: 38px 40px; border-radius: 28px; color: #f2fff8;
+    background: linear-gradient(120deg, #103e37, #175d4d);
+    box-shadow: 0 16px 42px #103e3718; position: relative; overflow: hidden;
+}
+.hero-panel::after {
+    content: ''; position: absolute; width: 240px; height: 240px; right: -80px; top: -100px;
+    border: 42px solid #a6e9c51a; border-radius: 50%; pointer-events: none;
+}
+.hero-eyebrow { color: #bbecd2; font-size: 11px; letter-spacing: .18em; font-weight: 700; }
+.hero-panel h1 { font-size: clamp(30px, 5vw, 44px); font-weight: 650; letter-spacing: -.045em;
+    line-height: 1.15; margin: 18px 0 12px; color: #f2fff8; }
+.hero-panel p { margin: 0; color: #cce5da; font-size: 15px; line-height: 1.7; max-width: 620px; }
+.hero-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.hero-tags span { padding: 6px 12px; border: 1px solid #bcebd22e; border-radius: 99px;
+    color: #d7f5e4; font-size: 12px; background: #ffffff08; }
+#mock-notice { border: 1px solid var(--app-notice-border); background: var(--app-notice); border-radius: 16px;
+    padding: 15px 20px; color: var(--app-notice-text); font-size: 13px; line-height: 1.7; }
+#mock-notice strong { color: var(--app-notice-title); }
+#input-card, #output-card { border: 1px solid var(--app-card-border); background: var(--app-card);
+    border-radius: 22px; padding: 26px; box-shadow: 0 6px 24px #173a3606; gap: 18px; }
+/* Auto-grouped Gradio forms otherwise retain their dark-mode panel fill. */
+#workspace .form { background: transparent; border: 0; box-shadow: none; }
+.section-heading { color: var(--app-text); }
+.section-heading h2 { margin: 0 0 5px; font-size: 19px; letter-spacing: -.025em; }
+.section-heading p { margin: 0; color: var(--app-muted); font-size: 13px; line-height: 1.6; }
+.section-index { font-size: 11px; letter-spacing: .12em; color: var(--app-accent-text); margin-bottom: 8px; }
+#url-input, #summary-output, #flow-status {
+    border: 0; padding: 4px; background: transparent; box-sizing: border-box;
+}
+/* Gradio's bordered labels use negative margins to fill padded blocks. Reset
+   that wrapper so fields stay inside our cards, in both light and dark mode. */
+#workspace :is(#url-input, #summary-output, #flow-status) label {
+    display: flex; flex-direction: column; gap: 8px;
+    margin: 0; padding: 0; width: 100%; box-sizing: border-box;
+    border: 0; border-radius: 0; background: transparent;
+}
+#workspace :is(#url-input, #summary-output, #flow-status) label > span {
+    background: transparent; color: var(--app-label); padding: 0;
+    border: 0; font-size: 13px; font-weight: 600;
+}
+#workspace :is(#url-input, #summary-output, #flow-status) textarea {
+    width: 100%; max-width: 100%; box-sizing: border-box; margin: 0;
+    border: 1px solid var(--app-field-border); border-radius: 12px; padding: 13px 15px;
+    background: var(--app-input); color: var(--app-text); box-shadow: none;
+}
+#workspace :is(#url-input, #summary-output, #flow-status) textarea::placeholder {
+    color: var(--app-placeholder); opacity: 1;
+}
+#flow-status { margin-bottom: 18px; }
+#actions { gap: 12px; }
+#summarize-button { background: var(--app-primary); color: var(--app-primary-text); border: 1px solid var(--app-primary);
+    border-radius: 12px; min-height: 48px; box-shadow: 0 4px 10px #176b501a; }
+#summarize-button:hover { background: var(--app-primary-hover); border-color: var(--app-primary-hover); }
+#cancel-button { background: var(--app-secondary); color: var(--app-secondary-text); border: 1px solid var(--app-secondary-border);
+    border-radius: 12px; min-height: 48px; }
+#cancel-button:hover { background: var(--app-secondary-hover); }
+#workspace button:focus-visible, #workspace textarea:focus-visible {
+    outline: 3px solid var(--app-focus); outline-offset: 3px;
+}
+#workspace #output-card #flow-status textarea {
+    background: var(--app-status); border-color: var(--app-status-border); color: var(--app-status-text); font-size: 13px;
+}
+#workspace #output-card #summary-output textarea {
+    background: var(--app-output); border-color: var(--app-output-border); line-height: 1.85; font-size: 15px;
+}
+#page-note { text-align: center; color: var(--app-footnote); font-size: 12px; padding: 0 12px; }
+@media (max-width: 640px) {
+    #workspace { margin-top: 12px; gap: 16px; }
+    .hero-panel { padding: 28px 24px; border-radius: 20px; }
+    #input-card, #output-card { padding: 20px; border-radius: 18px; }
+    #actions { flex-direction: column; }
+}

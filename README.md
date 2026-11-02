@@ -19,6 +19,10 @@ uv run --locked python -m summarizer
 The app opens a browser and binds only `127.0.0.1:7860`, with Gradio sharing disabled.
 Paste a URL and click Summarize. Status reports loading, extraction and mock streaming.
 Cancel stops the active event; partial output is retained. New runs clear previous output.
+The **Dark mode** switch at the top changes the entire palette. Your selection is saved in
+this browser's local storage and restored on future visits to the same address and port.
+On a first visit the app follows your system's light/dark preference. If browser storage is
+blocked, switching still works for the current visit. Clearing site data resets the preference.
 Fetching remote pages requires network access. Browser binaries use Playwright's own cache.
 `uv.lock` is checked in; dependency changes require `uv sync` and review of the updated lock.
 
@@ -42,9 +46,22 @@ See PROGRESS.md for exact execution evidence, mutation checks, and independent r
 
 - `contracts.py`: framework-free loader, extractor, streaming provider Protocols and errors.
 - `application.py`: URL validation and summarize-page orchestration; receives dependencies explicitly.
+  Emits immutable `SummarizationSnapshot` objects containing a `Stage` enum and `output_text`;
+  presentation translates stages into user-facing messages.
 - `adapters/web.py`: resource-owning Playwright loading and Trafilatura extraction.
 - `adapters/mock.py`: deterministic deltas, cooperative cancellation, optional injected failures.
 - `presentation.py`: Gradio components, event/status mapping and retained partial output on failure.
+- `ui_style.py`: constructs the Gradio base theme using local system fonts.
+- `assets/templates/*.html`: static header, theme switch, notices, section headings and footer.
+- `assets/styles.css`: light/dark palettes, responsive card layout and focus styling.
+- `assets/color_mode.js`: browser-side theme switching and saved preference.
+- `ui_assets.py`: loads trusted static assets into named constants via Python package resources;
+  this works independently of the current directory, including from built wheels.
+  Composition passes the CSS at launch using Gradio 6's theme/CSS API.
+
+Edit the HTML fragments to change static copy/markup, CSS to change appearance, and JavaScript
+to change theme behavior. `presentation.py` keeps the Gradio components and event wiring.
+These fragments contain no user-input substitution and need no template engine or extra server.
 - `config.py`: validated environment settings; `__main__.py` constructs dependencies and launches.
 
 Dependency direction is presentation → application → contracts; concrete adapters implement contracts.

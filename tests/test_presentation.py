@@ -17,7 +17,15 @@ async def test_ui_resets_and_completes() -> None:
     ]
     assert events[0][0] == ""
     assert events[-1] == ("first second", "Complete — mock demonstration only")
-    assert any(status == "Loading page" for _, status in events)
+    assert [status for _, status in events] == [
+        "Starting — mock provider",
+        "Loading page",
+        "Extracting readable text",
+        "Streaming mock demonstration",
+        "Streaming mock demonstration",
+        "Streaming mock demonstration",
+        "Complete — mock demonstration only",
+    ]
     assert any(text == "first" for text, _ in events)
 
 

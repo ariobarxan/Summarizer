@@ -5,6 +5,8 @@ from .adapters.web import PlaywrightPageLoader, TrafilaturaContentExtractor
 from .application import SummarizePage
 from .config import Config
 from .presentation import create_ui
+from .ui_assets import UI_CSS
+from .ui_style import create_theme
 
 
 def main() -> None:
@@ -23,6 +25,8 @@ def main() -> None:
         server_port=config.port,
         share=False,
         inbrowser=True,
+        theme=create_theme(),
+        css=UI_CSS,
     )
 
 

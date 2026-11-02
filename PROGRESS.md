@@ -95,3 +95,119 @@ made after freeze or in response to final review. Only review/progress records a
 All tasks finished; no work in progress. Next actions belong to user: decide whether to address
 review findings in a later run. Launch and quality commands are in README.md. uv.lock committed
 with application at 888e6fc. Final records committed separately for traceability.
+
+## Follow-up: typed stages and expressive snapshots
+User authorized a new refactor after the original review freeze: replace string stages with a
+Stage enum, rename Update to SummarizationSnapshot and text to output_text. Implemented in
+application.py; presentation.py now owns the mapping to existing mock UI messages. README
+architecture note updated. Prior URL explanation comments preserved; unrelated AI/ files untouched.
+This addresses review finding 1; finding 2 (cleanup failure masking cancellation) remains unchanged.
+REVIEW.md remains the historical review of 888e6fc, not a review of this follow-up.
+Tests updated because the approved public contract changed: string completion checks now assert
+provider-neutral enum stages, field accesses use output_text, and presentation asserts all displayed
+stage messages. Existing accumulated-output, failure, cleanup and browser assertions retained.
+Verification on the follow-up working tree:
+- `uv run --locked ruff format --check src tests`: 15 files already formatted.
+- `uv run --locked ruff check src tests`: passed.
+- `uv run --locked mypy src tests`: passed, 15 source files.
+- `uv run --locked pytest -q`: 70 passed, 6 existing third-party warnings, 6.70s.
+- `git diff --check`: passed.
+Follow-up implemented and verified; no additional independent review performed for this refactor.
+
+## Follow-up: summarizer dependency naming
+User requested renaming the SummarizePage dependency from provider to summarizer.
+Changed constructor keyword, attribute and stream access in application.py, plus its docstrings.
+Pipeline regression test now constructs with explicit summarizer= keyword and checks output/cleanup.
+Mock output and UI wording remain unchanged. Existing unrelated working-tree edits preserved.
+Verified: `uv run --locked ruff format --check src tests` (15 files),
+`uv run --locked ruff check src tests`, `uv run --locked mypy src tests` (15 files), and
+`uv run --locked pytest -q` (70 passed, 6 existing third-party warnings, 6.71s).
+Status: implemented and verified.
+
+## Follow-up: modern Gradio presentation
+User requested a modern UI and cohesive palette. Implemented teal/mint/ivory styling with amber
+mock-mode notice, hero header, source/output cards, ready state, responsive layout and focus outlines.
+Presentation component labels/event semantics remain compatible with the existing browser tests.
+Added presentation-only ui_style.py; composition and browser smoke pass theme/CSS to Gradio launch.
+No new dependencies, external fonts/assets or business-logic changes. API checked against installed
+Gradio signatures and official https://www.gradio.app/guides/theming-guide and
+https://www.gradio.app/guides/custom-CSS-and-JS (Gradio 6 launch theme/css options).
+Verification:
+- `uv run --locked ruff format src/summarizer/presentation.py src/summarizer/ui_style.py src/summarizer/__main__.py tests/test_browser_flow.py`: formatted 1 file; 3 unchanged.
+- `uv run --locked ruff check src tests`: passed.
+- `uv run --locked mypy src tests`: passed, 16 source files.
+- `uv run --locked pytest -q --basetemp=/tmp/summarizer-ui-verification`: 70 passed,
+  6 existing Gradio/Pandas warnings, 6.78s; real browser flow includes themed launch.
+- Inline uv/Playwright preview at 1440x1100 and 390x844: no horizontal overflow;
+  screenshots artifacts/ui-desktop.png and artifacts/ui-mobile.png visually inspected.
+No claim of comprehensive accessibility or cross-browser verification. Historical final review
+is unchanged; no new independent review for this visual follow-up. Status implemented and verified.
+
+## Follow-up: local launch troubleshooting
+User reported port collision then unreachable UI. lsof found older `python -m summarizer`
+PID 19299 listening on 127.0.0.1:7860; unsandboxed curl timed out after 10 seconds.
+No listener on 7861. Left the older process untouched; started current UI with
+`SUMMARIZER_PORT=7861 uv run --locked python -m summarizer` (session 41348).
+Unsandboxed curl to http://127.0.0.1:7861/ returned HTTP 200; inline uv/Playwright
+check confirmed title Local Webpage Summarizer and visible Summarize button.
+No implementation changes. Current app left running on port 7861 for the user.
+
+## Follow-up: textbox containment and colors
+User screenshot showed field wrappers bleeding into card/background, especially with dark preference.
+ui_style.py now resets Gradio label negative margins, removes automatic form panel fill, adds
+contained 1px rounded field borders and label spacing. Explicitly distinct fills: URL #f8fbf9,
+status #eaf4ee, output #f7f9fc. Scoped field colors work with light and dark browser preferences.
+Checks: locked Ruff format/lint and mypy passed; locked pytest 70 passed (6 existing warnings, 6.71s)
+before final two CSS selector specificity adjustments. Final browser checks after those adjustments
+verified containment with at least 16px card inset, transparent/white ancestors, no horizontal
+overflow and three distinct computed field fills at 1100px/390px in light/dark modes. Screenshots
+saved as artifacts/fields-{light,dark}-{1100,390}.png; desktop dark preview visually inspected.
+Restarted only coordinator-launched port 7861 instance to load styles; running in session 2476.
+No application logic changed. Status implemented and verified.
+
+## Follow-up: persistent light/dark mode
+User requested two palettes, a top switch and persistence. Implemented accessible native button
+with role=switch/aria-checked in presentation.py; browser-local initialization/toggle in ui_style.py
+via Gradio HTML js_on_load. Uses validated localStorage choice or first-visit system preference;
+storage exceptions fall back to working session-only switching. CSS palette tokens cover canvas,
+cards, fields, labels, controls, notices and focus colors. No backend preference/global user state.
+README documents browser/address/port scope and clearing site data. Official API reference:
+https://www.gradio.app/docs/gradio/html (js_on_load and element scope), checked against installed API.
+Browser regression test parameterized for light/dark defaults; added keyboard switching, real
+computed palette change, localStorage persistence/reload with conflicting OS preference, mobile
+no-overflow and denied-storage behavior. Existing pipeline/cancellation assertions retained.
+Checks:
+- `uv run --locked ruff format --check src tests`: 16 files formatted.
+- `uv run --locked ruff check src tests`: passed.
+- `uv run --locked mypy src tests`: passed, 16 files.
+- `uv run --locked pytest -q`: 71 passed, 12 existing Gradio/Pandas warnings, 11.14s.
+- Inline Chromium on live server: both palettes at 1100px and 390px retain field/card insets,
+  no horizontal overflow, new page visit restores stored dark preference. Snapshots at
+  artifacts/theme-{light,dark}-{1100,390}.png. Stable post-transition dark preview saved to
+  artifacts/theme-dark-final.png and visually inspected; initial immediate screenshot captured
+  button colors mid-transition, so final check waited explicitly for computed target color.
+- One diagnostic selector matched two wrapper divs; narrowed to html-container for successful
+  contrast inspection. No application changes needed from that diagnostic.
+Restarted coordinator-owned port 7861 app; running session 33519. Historical independent review
+unchanged; no new independent review for this follow-up. Implemented and verified.
+
+## Follow-up: separate UI resources
+User requested organizing inline markup into separate files. Extracted all six static HTML
+fragments to assets/templates/, CSS to assets/styles.css, and theme JavaScript to assets/color_mode.js.
+ui_assets.py loads trusted bundled resources into named constants with importlib.resources;
+presentation.py now composes components using those constants. ui_style.py only constructs the
+Gradio theme. Composition/browser-test imports adjusted; no dependency or configuration changes.
+HTML formatted for editing; no runtime interpolation or template framework introduced. README updated.
+Verification on this follow-up:
+- `uv run --locked ruff format --check src tests`: 17 files already formatted.
+- `uv run --locked ruff check src tests`: passed.
+- `uv run --locked mypy src tests`: passed, 17 source files.
+- `uv run --locked pytest -q`: 71 passed, 12 existing Gradio/Pandas warnings, 11.70s.
+  Existing browser assertions unchanged, covering both themes, persistence, stream/cancel/errors.
+- `uv build --wheel --out-dir /tmp/summarizer-ui-assets-wheel`: succeeded.
+- Inline `uv run --locked python -I` loaded ui_assets directly from wheel, asserted module path
+  inside wheel, all 8 assets bundled and HTML/CSS/JS content accessible: passed.
+- `git diff --check`: passed.
+Prior working changes and unrelated AI/ files preserved. Existing running server left untouched
+because the refactor preserves behavior; restarting loads the reorganized modules/resources.
+Status implemented and verified; historical independent review unchanged.
