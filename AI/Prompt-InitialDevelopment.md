@@ -2,6 +2,8 @@ Summarizer implementation prompt
 
 > Historical prompt: references to `summarize.md` below now refer to
 > [docs/specification.md](../docs/specification.md). The original prompt text is preserved.
+> The user subsequently moved the execution record from root `PROGRESS.md` to
+> [docs/development-log.md](../docs/development-log.md), superseding the original location requirement.
 
 Implement the local webpage summarizer described in summarize.md.
 Act as the coordinator and explicitly delegate suitable work to subagents.

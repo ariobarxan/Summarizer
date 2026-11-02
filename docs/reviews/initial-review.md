@@ -3,7 +3,7 @@
 > **Historical review of commit `888e6fc`.** File paths, line numbers and findings below
 > describe that frozen version. The mock-specific stage-label finding was addressed later;
 > the combined cancellation/cleanup-failure finding remains unresolved. See
-> [PROGRESS.md](../../PROGRESS.md) for subsequent changes. The original report is preserved below.
+> [the development log](../development-log.md) for subsequent changes. The original report is preserved below.
 
 Task D — completed independent read-only review of frozen commit
 `888e6fcea2855e548445a7035567642368aaed17` using gpt-6-astra (high reasoning).

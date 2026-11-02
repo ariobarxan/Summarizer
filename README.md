@@ -87,7 +87,8 @@ actual Gradio app and exercise extraction, streaming, completion, invalid input 
 They also check both system-theme defaults, keyboard theme switching, saved preference after
 reload, mobile overflow, and switching when browser storage is denied.
 Unit tests use independent substitutes to verify orchestration without starting Gradio or Chromium.
-See PROGRESS.md for exact execution evidence, mutation checks, and independent review status.
+See [the development log](docs/development-log.md) for exact execution evidence, mutation checks,
+and independent review status.
 
 ## Architecture and decisions
 
@@ -254,11 +255,12 @@ One known lifecycle defect remains: if navigation is cancelled and Playwright's 
 also raises an error, the cleanup error can mask cancellation as `PageLoadError`. See finding 2
 in [the initial review](docs/reviews/initial-review.md) for reproduction and suggested remediation. That review describes the
 original frozen implementation; its mock-specific stage-label finding was addressed later by
-the `Stage` enum and presentation-side message mapping recorded in [PROGRESS.md](PROGRESS.md).
+the `Stage` enum and presentation-side message mapping recorded in
+[the development log](docs/development-log.md).
 
 ## Project records
 
 - [Original specification](docs/specification.md), with the mock-only scope override noted.
 - [Initial independent review](docs/reviews/initial-review.md), tied to its reviewed commit.
-- [Implementation and verification record](PROGRESS.md).
+- [Implementation and verification record](docs/development-log.md).
 - [Original AI implementation prompt](AI/Prompt-InitialDevelopment.md).

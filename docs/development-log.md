@@ -1,5 +1,8 @@
 # Execution record
 
+> Formerly `PROGRESS.md` at the project root. Moved here by explicit user instruction;
+> historical entries below retain their original filenames and paths.
+
 ## Scope and baseline
 Implement summarize.md with the requested mock-only override. No existing application or tests;
 only summarize.md and .gitignore were present (plus tool caches and an existing .venv).
@@ -252,3 +255,9 @@ Original specification body and review report preserved. README links/project re
 AI prompt has a relocation note without rewriting historical instructions. Earlier PROGRESS entries
 retain historical filenames; the new paths above supersede them. Documentation-only change.
 Verified local link targets and `git diff --check`; no application tests needed. User requested commit.
+
+## Follow-up: relocate development log
+User explicitly authorized moving root PROGRESS.md to docs/development-log.md, superseding the
+original root-location requirement. Updated README and historical review's current-reference link;
+added relocation note to preserved AI prompt. Historical log contents retained. Documentation-only;
+`git diff --check` and target-file checks passed. No runtime tests needed. User requested commit.
