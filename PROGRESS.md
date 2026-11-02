@@ -211,3 +211,13 @@ Verification on this follow-up:
 Prior working changes and unrelated AI/ files preserved. Existing running server left untouched
 because the refactor preserves behavior; restarting loads the reorganized modules/resources.
 Status implemented and verified; historical independent review unchanged.
+
+## GitHub upstream and push
+User requested origin https://github.com/ariobarxan/Summarizer and pushing main.
+HTTPS push lacked available credentials; existing SSH repository access verified successfully.
+Origin switched to SSH for the same requested GitHub repository. Fetched origin/main (554a2a2),
+an independent initial commit containing only MIT LICENSE and Python .gitignore.
+Merged unrelated histories without force-pushing; resolved .gitignore add/add by retaining the
+remote Python ignore rules and local .venv/ and .DS_Store entries. Application unchanged.
+Prior verification still applies to application state. AI/ and generated artifacts remain untracked.
+Next: commit merge, push main with upstream tracking, verify remote commit equals local HEAD.
