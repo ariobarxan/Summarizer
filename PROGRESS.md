@@ -243,3 +243,12 @@ Added a two-column README preview with 360px-wide linked images, descriptive alt
 and compact section-navigation links. Existing main README content preserved.
 Verified both destination PNGs exist/nonempty and `git diff --check` passes. Documentation-only;
 no application tests rerun. Changes local/uncommitted; unrelated AI/ and artifacts/ untouched.
+
+## Follow-up: organize specification and historical review
+Moved summarize.md to docs/specification.md and REVIEW.md to docs/reviews/initial-review.md.
+Added scope/history notes: real LLM/model-budgeting work remains deferred; review is tied to
+888e6fc, with stage-label finding subsequently addressed and cleanup/cancellation defect unresolved.
+Original specification body and review report preserved. README links/project records updated;
+AI prompt has a relocation note without rewriting historical instructions. Earlier PROGRESS entries
+retain historical filenames; the new paths above supersede them. Documentation-only change.
+Verified local link targets and `git diff --check`; no application tests needed. User requested commit.

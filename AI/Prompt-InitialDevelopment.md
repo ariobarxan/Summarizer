@@ -1,5 +1,8 @@
 Summarizer implementation prompt
 
+> Historical prompt: references to `summarize.md` below now refer to
+> [docs/specification.md](../docs/specification.md). The original prompt text is preserved.
+
 Implement the local webpage summarizer described in summarize.md.
 Act as the coordinator and explicitly delegate suitable work to subagents.
 

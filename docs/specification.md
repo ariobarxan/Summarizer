@@ -1,5 +1,10 @@
 # Local Webpage Summarizer
 
+> **Original specification.** The implementation intentionally uses a clearly labelled,
+> deterministic mock summarizer. Real local LLM integration, token budgeting, context-window
+> handling, splitting and summary combination are deferred. The original requirements below
+> are preserved for context; see [the README](../README.md) for current behavior and setup.
+
 ## Purpose
 
 A local app that accepts a webpage URL and displays a summary beneath the input. Summarization uses the user's existing local LLM, rather than a hosted LLM service.

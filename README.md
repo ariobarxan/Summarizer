@@ -252,6 +252,13 @@ cancellation. The Gradio queue is bounded to eight pending jobs and one active s
 
 One known lifecycle defect remains: if navigation is cancelled and Playwright's browser cleanup
 also raises an error, the cleanup error can mask cancellation as `PageLoadError`. See finding 2
-in [REVIEW.md](REVIEW.md) for reproduction and suggested remediation. That review describes the
+in [the initial review](docs/reviews/initial-review.md) for reproduction and suggested remediation. That review describes the
 original frozen implementation; its mock-specific stage-label finding was addressed later by
 the `Stage` enum and presentation-side message mapping recorded in [PROGRESS.md](PROGRESS.md).
+
+## Project records
+
+- [Original specification](docs/specification.md), with the mock-only scope override noted.
+- [Initial independent review](docs/reviews/initial-review.md), tied to its reviewed commit.
+- [Implementation and verification record](PROGRESS.md).
+- [Original AI implementation prompt](AI/Prompt-InitialDevelopment.md).
